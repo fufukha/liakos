@@ -1,0 +1,766 @@
+* {
+	box-sizing: border-box;
+}
+
+
+/*===========
+Variables
+============*/
+$black: rgb(0, 0, 0);
+$white: rgb(255, 255, 255);
+$softwhite: rgb(240, 240, 240);
+$grey: rgb(70, 70, 70);
+$red: rgb(207, 0, 15);
+$blue : rgb(73, 140, 243);
+$yellow: rgb(251, 206, 72);
+$pink: rgb(251, 88, 95);
+
+$map-color: ("black": $black, "white": $white, "softwhite": $softwhite, "grey": $grey, "pink": $pink, "blue": $blue, "yellow": $yellow);
+$list-color: ("black", "white", "softwhite", "grey", "pink", "blue", "yellow");
+
+$card-padding: 60px 60px;
+
+$navbar-height: 58px;
+
+$break_xs:  567px;
+$break_sm:  767px; 
+$break_med: 992px;
+$break_lg:  1200px;
+$break_xl: 1500px;
+
+/*===========
+Mixins
+============*/
+@mixin cross-browser ($property, $value) {
+	-webkit-#{$property}: $value;
+		 -moz-#{$property}: $value;
+			-ms-#{$property}: $value;
+			 -o-#{$property}: $value;
+					#{$property}: $value;
+}
+
+@mixin cross-browser_content ($property, $value) {
+	-webkit-#{$property} {@content}
+		 -moz-#{$property} {@content}
+			-ms-#{$property} {@content}
+			 -o-#{$property} {@content}
+					#{$property} {@content}
+}
+
+@mixin cross-browser_content-pseu ($property, $value) {
+	-webkit-#{$property} {@content}
+		 -moz-#{$property} {@content}
+			-ms-#{$property} {@content}
+			 -o-#{$property} {@content}
+					#{$property} {@content}
+}
+
+@mixin placeholder {
+	&::-webkit-input-placeholder {@content}
+	&:-ms-input-placeholder      {@content}
+	&:-moz-placeholder           {@content}
+	&::-moz-placeholder          {@content}  
+}
+
+@mixin border ($edge, $width, $color, $style:solid) {
+	@if $edge == top {
+		border-width: $width 0 0 0;
+	} @elseif $edge == right {
+		border-width: 0 $width 0 0;
+	} @elseif $edge == bottom {
+		border-width: 0 0 $width 0;
+	} @elseif $edge == left {
+		border-width: 0 0 0 $width; 
+	} @elseif $edge == all {
+		border-width: $width $width $width $width;
+	}
+	border-color: $color;
+	border-style: $style;
+}
+
+@mixin caret($direction, $width, $color:black, $type:normal, $style:solid){
+	width: 0;
+	height: 0;
+	$width-eq: $width*2*0.866;
+	@if $direction == up {
+		border-left: $width $style transparent;
+		border-right: $width $style transparent;
+		@if $type == equilateral {
+			border-bottom: $width-eq $style $color;
+		} @else {
+			border-bottom: $width $style $color;
+		}
+	}
+	@if $direction == right {
+		border-top: $width $style transparent;
+		border-bottom: $width $style transparent;
+		@if $type == equilateral {
+			border-left: $width-eq $style $color;
+		} @else {
+			border-left: $width $style $color;
+		}
+	}
+	@if $direction == down {
+		border-left: $width $style transparent;
+		border-right: $width $style transparent;
+		@if $type == equilateral {
+			border-top: $width-eq $style $color;
+		} @else {
+			border-top: $width $style $color;
+		}
+	}
+		@if $direction == left {
+		border-top: $width $style transparent;
+		border-bottom: $width $style transparent;
+		@if $type == equilateral {
+			border-right: $width-eq $style $color;
+		} @else {
+			border-right: $width $style $color;
+		}
+	}
+}
+
+@mixin keyframes($animation-name) {
+	@-webkit-keyframes #{$animation-name} {
+			@content;
+	}
+	@-moz-keyframes #{$animation-name} {
+			@content;
+	}  
+	@-ms-keyframes #{$animation-name} {
+			@content;
+	}
+	@-o-keyframes #{$animation-name} {
+			@content;
+	}  
+	@keyframes #{$animation-name} {
+			@content;
+	}
+}  
+
+@mixin animation($arg...) {
+	-webkit-animation: #{$arg};
+		 -moz-animation: #{$arg};
+			-ms-animation: #{$arg};
+			 -o-animation: #{$arg};
+					animation: #{$arg};      
+}
+
+@mixin transition($args...) {
+	-webkit-transition: $args;
+		 -moz-transition: $args;
+			-ms-transition: $args;
+			 -o-transition: $args;
+					transition: $args;
+}
+
+@mixin aspect-ratio($term1, $term2){
+		position: relative;
+		width: 100%;
+		height: 0;
+		padding-bottom: percentage($term2 / $term1);
+		& > *:first-child {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+}
+
+
+/*===========
+Functions
+============*/
+
+@each $color in $list-color {
+	/*Background w/text color*/
+	.#{$color} {
+		background: map-get($map-color, $color);
+		@if $color == "yellow" {
+			color: map-get($map-color, "grey");			
+		} @else {
+			color: map-get($map-color, "white");
+		 }
+	 }
+	/*Button w/hover color*/ 
+	button[class~=#{$color}] {
+		@if $color == "pink" {
+			&:hover, &:active {
+				background: map-get($map-color, "grey");
+			} 
+		} @elseif $color == "yellow" {
+			&:hover, &:active {
+				background: map-get($map-color, "blue");
+				color: map-get($map-color, "white")
+			}
+		} @elseif $color == "blue" {
+			&:hover, &:active {
+				background: map-get($map-color, "grey");
+			}
+		}
+	}
+	.card[class~=#{$color}] {
+		@if $color == "blue" {
+			button:hover, button:active {
+				background: map-get($map-color, "grey");
+			}
+		}
+	}
+}
+
+// @for $i from 1 through 12 {
+//   .col-#{$i} {
+//     width: 100vw / $i;
+//   }
+// }
+
+/*===========
+Components
+============*/
+
+/*Buttons*/
+
+.btn {
+	border: none;
+	padding: 15px 30px;
+	cursor: pointer;
+	@include transition(background 0.3s ease);
+}
+
+.primary-btn {
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-bottom: 30px;
+	@extend .btn;
+}
+
+
+
+/*Links*/
+a {
+	color: $grey;
+	text-decoration: none;
+	cursor: pointer;
+	&:hover, &:active {
+		color: $blue;
+	}
+}
+
+/*Forms*/
+
+form, input, select {
+	color: $grey;
+}
+
+label, input, select {
+	display: block;
+	text-align: left;
+}
+
+fieldset, input[type="text"], select {
+	border: none;
+}
+
+fieldset, legend {
+	padding: 0;
+	margin: 0;
+}
+
+input:focus, select:focus {
+		outline: none;
+	}
+
+input:invalid:not(:focus):not(:placeholder-shown),
+input:invalid:not(:focus):not(:placeholder-shown) + span{
+	color: $red;
+	visibility: visible;
+}
+
+.primary-form {
+	$input-size: 20px;
+	$span-size: ($input-size / 2);
+	text-transform: capitalize;
+	position: relative;
+	legend {
+		font-size: $input-size;
+		margin-bottom: ($input-size * 2);
+	}
+	label {
+		display: none;
+	}
+	span {
+		font-size: $span-size;
+		position: relative;
+		bottom: $input-size + $span-size;
+		color: $red;
+		visibility: hidden;
+	}
+	input {
+		font-size: $input-size;
+		margin-bottom: ($input-size + $span-size);
+	}
+	input[type="text"]:focus {
+		@include border(bottom, 3px, $yellow);
+		@include placeholder{color: transparent};
+	}
+	select {
+		@include cross-browser(appearance, none);
+	}
+	input, input[class~="btn"]:not(), select {
+		width: 100%;
+	}
+	input[type="text"] {
+		height: ($input-size + 5);
+		width: 100%;
+		@include placeholder{font-size: $input-size}
+	}
+}
+
+.wrapper-select {
+	position: relative;
+	&::after {
+		content: "";
+		position: absolute;
+		bottom: calc(50% - 10px);
+		right: 10px;
+		@include caret(down, 10px, $grey)
+	}
+}
+
+/*Cards*/
+
+.card {
+	padding: 10vw 10vw;
+	@media screen and (min-width: $break_xs) {
+		padding: $card-padding;
+	}
+	position: relative;
+	$h2-size: 24px;
+	p {
+		line-height: 1.5em;
+	}  
+}
+
+.articles article {
+	@include cross-browser(column-width, 250px);
+	@include cross-browser(column-count, 2);
+	h2{
+		@include cross-browser(column-span, all);
+		margin-bottom: 20px;
+	}
+	p {
+		margin-top: 0;
+		max-width: 560px;
+	}
+}
+
+article p:last-child {
+	margin-bottom: 0;
+}
+
+.card_quote {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.card_quote blockquote {
+	margin: 0;
+	font-size: 1.2em;
+	position: relative;
+	&::before {
+		content: '\201D';
+		font-size: 200px;  
+		display: inline-block;
+		margin-right: 10px;
+		float: left;
+	}
+	 > p {
+		vertical-align: top;
+		margin: 35px 0 0 0;
+	}
+	footer, p {
+		display: inline-block;
+		width: calc( 100% - 78px);
+	}
+	footer p {
+		text-align: right;
+		width: 100%;
+		margin: 10px 0;
+	}
+}
+
+.wrapper_quote {
+	margin: 10% 10% 10% 8%;
+}
+
+
+.about img,
+.articles img {
+	width: 50%;
+	margin-right: 20px;
+}
+
+@include keyframes(float) {
+	0% { top: 0px;}
+	50% { top: -50px }
+	75%{ bottom: -3px;}
+	100% { top: 0px;}
+}
+
+
+.card_link {
+	a {
+		display: block;
+		width: 100%;
+		min-width: 400px;
+		min-height: 400px;
+		height: 100%;
+		background: url("https://www.waterbedshop.be/assets/sites/akvalito/img/icons/location-pointer.svg") center no-repeat;
+		background-size: 60% 60%;
+		position: relative;
+		@include animation(float 5s ease-in-out forwards infinite);
+	}
+}
+
+body > .card {
+	box-sizing: border-box;
+	display: inline-block;
+	width: 250px;
+	height: 250px;
+	text-align: center;
+	padding-top: 100px;
+}
+
+
+
+/*===========
+Layout
+============*/
+.navbar, .navbar-main,
+.navbar nav:not(.collapse-menu) ul{
+	display: flex;
+}
+
+.navbar {
+	padding: 10px 30px;
+	background: $white;
+	position: fixed;
+	top: 0;
+	z-index: 99999;
+	width: 100vw;
+	max-width: $break_xl;
+	height: $navbar-height;
+	justify-content: space-between;
+}
+
+.navbar-main {
+	justify-content: flex-end;
+	align-items: center;
+	nav:not(.collapse-menu) {
+		display: none;
+		@media screen and (min-width: $break_xs) {
+			display: block;
+		}
+	}
+	nav:not(.collapse-menu) {
+		ul {
+			padding: 10px 20px;
+		}
+		li {
+			margin-left: 20px;
+			position: relative;   
+			&::before {
+				content: "";
+				width: 0;
+				height: 3px;
+				background: $blue;
+				position: absolute;
+				bottom: -3px;
+				@include transition(width 0.2s ease);
+			} 
+			&:hover::before, &:active::before {
+				width: 100%;
+				@include transition(width 0.5s linear);
+			}
+		}
+	}
+	& a {
+		color: $black;
+		&:hover, &:active {
+			color: black;
+		}
+	}
+}
+
+.navbar li {
+	list-style-type: none;
+}
+
+body, ul {
+	margin: 0;
+}
+
+body {
+	font-family: sans-serif;
+}
+
+main {
+	margin: 58px auto 0 auto;
+}
+
+/*===========
+Grid
+============*/
+*[class~="row-flex"] {
+	@media screen and (min-width: $break_med) {
+		display: flex;
+		@for $i from 1 through 12 {
+			.col:nth-last-of-type(#{$i}):first-child,
+			.col:nth-last-of-type(#{$i}):first-child ~ .col {
+				width: (100vw / $i);
+			}
+		}
+	}
+ .col {
+		width: 100%;
+	}  
+} 
+
+
+/*===========
+Custom
+============*/
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	width: 320px;
+	margin: 0 auto;
+	background: $white;
+	@media screen and (min-width: 320px) {
+		width: 100%;
+		max-width: $break_xl;
+	}
+	.wrapper {
+		overflow: hidden;
+	}
+}
+
+.card button {
+	margin-top: 50px;
+}
+article img {
+	float: left;
+}
+
+.col {
+	@extend .softwhite;
+}
+.about .col:nth-child(1) {
+	@extend .blue;
+}
+
+.about .col:nth-child(2) {
+	@extend .grey;
+}
+
+.about .primary-btn {
+	@extend .yellow;
+	&:hover, &:active {
+		background: $grey;
+		color: $softwhite;
+	}
+}
+
+.portfolio .row-flex:first-child .col:nth-child(2) {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.join .col:nth-child(2) {
+	display: flex;
+	justify-content: center;
+}
+
+.portfolio .row-flex:first-child .col:nth-child(2) {
+		@extend .black;
+}
+
+.portfolio .row-flex:nth-child(2) .col:nth-child(1) {
+	@extend .pink;
+}
+
+.portfolio .row-flex:nth-child(2) .col:nth-child(3) {
+	@extend .blue;
+}
+
+.articles .col:nth-child(1) {
+	@extend .grey;
+}
+
+.articles .col:nth-child(2) {
+	@extend .yellow;
+}
+
+.join .col:nth-child(2) {
+	@extend .softwhite;
+}
+
+.join {
+	$scheme: "pink";
+	h2 {
+		font-size: 40px;
+		margin-bottom: 60px;
+		color: map-get($map-color, $scheme);
+	}
+	.primary-btn {
+		@extend .#{$scheme};
+	}
+}
+
+form .primary-btn {  
+	padding: 10px 50px;
+}
+
+.portfolio .card {
+	padding: 0;
+
+}
+
+.portfolio .col {
+	@media screen and (min-width: $break_med) {
+		height: 33.33vw;
+		// min-width: 425px;
+	}
+	height: 75vw;
+	min-height: calc( 320px / 3);
+}
+
+.portfolio img, .hero img{  
+	object-fit: cover;
+	width: 100%; 
+	height: 100%;
+}
+
+.primary-footer {
+	@extend .grey;
+	padding: 10px;
+	text-align: center;
+	font-size: 12px;
+	width: 100%;
+}
+
+.social {
+	display: none;
+	@media screen and (min-width: $break_xs) {
+		display: flex;
+	}
+	align-items: center;
+	a {
+		margin-left: 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	svg {
+		fill: $black;
+	}
+	a:hover, a:active {
+		svg {
+			fill: $blue;
+		}    
+	}
+}
+
+#hamburger-menu {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 15px;
+	margin-left: 20px;
+	span {
+		width: 20px;
+		height: 3px;
+		background: $black;
+	}
+	@media screen and (min-width: $break_xs) {
+		display: none;
+	}
+}
+
+.collapse-menu {
+	display: none;
+	background: $white;
+	padding: ($navbar-height + 30px) 30px 30px;
+	position: fixed;
+	z-index: -1;
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100vh;
+	ul {
+		padding: 0;
+	}
+	li {
+		font-size: 24px;
+		font-weight: bold;
+		padding: 5px 20px;
+		line-height: 1.5;
+	}
+	@media screen and (min-width: $break_xs) {
+		display: none;
+	}
+}
+
+.hero {
+	background: $softwhite;
+	width: 320px;
+	height: 240px;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	@media screen and (min-width: 320px) {
+		width: 100%;
+		height: 60vw;
+		max-width: $break_xl;
+	}
+	@media screen and (min-width: $break_med) {
+		width: 100%;
+		height: 700px;
+		max-width: $break_xl;
+	} 
+	img {
+		object-fit: cover;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	h1 {
+		color: $white;
+		font-size:60px;
+		@media screen and (min-width: $break_xs) {
+			font-size: 100px;
+		}
+		@media screen and (min-width: $break_med) {
+			font-size: 200px;
+		}
+		margin: 0;
+		@include border(all, 3px, $white);
+		z-index: 99999;
+		padding: 15px 20px;
+	}
+}
+
+//Video
+.wrapper-video {
+	@include aspect-ratio(16, 9);
+	iframe {
+		width: 100% !important;
+		height: 100% !important;
+	}
+}
